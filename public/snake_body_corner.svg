@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Border/Outline -->
+  <path
+    d="M 65,65
+       Q 65,35 35,35"
+    fill="none"
+    stroke="#2E7D32"
+    stroke-width="44"
+    stroke-linecap="round"/>
+
+  <!-- Main curved tube -->
+  <path
+    d="M 65,65
+       Q 65,35 35,35"
+    fill="none"
+    stroke="#4CAF50"
+    stroke-width="40"
+    stroke-linecap="round"/>
+
+  <!-- Highlight -->
+  <path
+    d="M 65,65
+       Q 65,35 35,35"
+    fill="none"
+    stroke="#66BB6A"
+    stroke-width="28"
+    stroke-linecap="round"/>
+</svg>

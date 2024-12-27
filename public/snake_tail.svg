@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Main tail shape -->
+  <path d="
+    M85,50
+    C85,30 70,25 50,25
+    C30,25 15,35 15,50
+    C15,65 30,75 50,75
+    C70,75 85,70 85,50
+    Z"
+    fill="#4CAF50"
+    stroke="#2E7D32"
+    stroke-width="4"
+    stroke-linejoin="round"/>
+  <!-- Inner highlight -->
+  <path d="
+    M80,50
+    C80,35 70,30 50,30
+    C35,30 25,38 25,50
+    C25,62 35,65 50,65
+    C65,65 80,65 80,50
+    Z"
+    fill="#66BB6A"
+    stroke="none"/>
+
+  <!-- Enhanced Rattle -->
+  <!-- Base segment -->
+  <ellipse cx="93" cy="50" rx="7" ry="6" fill="#2E7D32"/>
+  <ellipse cx="93" cy="50" rx="6" ry="5" fill="#4CAF50"/>
+  <ellipse cx="93" cy="50" rx="5" ry="4" fill="#2E7D32" opacity="0.6"/>
+
+  <!-- Middle segments with 3D effect -->
+  <ellipse cx="88" cy="50" rx="5.5" ry="4.5" fill="#2E7D32"/>
+  <ellipse cx="88" cy="50" rx="4.5" ry="3.5" fill="#4CAF50"/>
+  <ellipse cx="88" cy="50" rx="3.5" ry="2.5" fill="#2E7D32" opacity="0.6"/>
+
+  <ellipse cx="84" cy="50" rx="4.5" ry="3.5" fill="#2E7D32"/>
+  <ellipse cx="84" cy="50" rx="3.5" ry="2.5" fill="#4CAF50"/>
+  <ellipse cx="84" cy="50" rx="2.5" ry="1.5" fill="#2E7D32" opacity="0.6"/>
+
+  <!-- Connection segments -->
+  <ellipse cx="81" cy="50" rx="3.5" ry="2.5" fill="#2E7D32"/>
+  <ellipse cx="81" cy="50" rx="2.5" ry="1.5" fill="#4CAF50"/>
+
+  <!-- Highlights on each segment -->
+  <ellipse cx="93" cy="49" rx="3" ry="2" fill="#66BB6A" opacity="0.5"/>
+  <ellipse cx="88" cy="49" rx="2.5" ry="1.5" fill="#66BB6A" opacity="0.5"/>
+  <ellipse cx="84" cy="49" rx="2" ry="1" fill="#66BB6A" opacity="0.5"/>
+  <ellipse cx="81" cy="49" rx="1.5" ry="0.8" fill="#66BB6A" opacity="0.5"/>
+</svg>

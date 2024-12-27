@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Main body -->
+  <rect x="5" y="25"
+        width="90" height="50"
+        rx="25" ry="25"
+        fill="#4CAF50"
+        stroke="#2E7D32"
+        stroke-width="4"/>
+  <!-- Inner highlight -->
+  <rect x="10" y="30"
+        width="80" height="20"
+        rx="10" ry="10"
+        fill="#66BB6A"
+        stroke="none"/>
+</svg>

@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Basic global styling with a greenish gradient background.
+  No overflow hidden here so the snake can roam.
+*/
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  background: linear-gradient(115deg, #000000 20%, #003300 100%);
+  color: #d1ffd1; /* A soft greenish text color */
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+  Optional: If you have transaction cards or other fixed components,
+  keep them at a higher z-index than the snake's container
+  (snake uses z-0).
+*/
+.transaction-card {
+  background-color: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 0.5rem;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+  width: 320px;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 50;
+}
+
+.transaction-card-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #d1ffd1;
+}
+
+.transaction-card-body {
+  padding: 0.75rem 1rem;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.transaction-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  font-size: 0.75rem;
+  border-bottom: 1px dashed rgba(0, 255, 136, 0.2);
+}
