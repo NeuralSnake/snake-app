@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useRef, useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { db } from '@/lib/firebaseClient'
 import { doc, onSnapshot } from 'firebase/firestore'
 import TransactionCard from '@/components/TransactionCard'
@@ -27,6 +28,7 @@ interface SnakeState {
 }
 
 const Home: React.FC = () => {
+  const router = useRouter()
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   const [cellSize, setCellSize] = useState<number>(40)
@@ -210,7 +212,7 @@ const Home: React.FC = () => {
       }
     }
 
-    (async () => {
+    ;(async () => {
       await loadAll()
     })()
   }, [])
@@ -252,88 +254,94 @@ const Home: React.FC = () => {
     return turnMap[turnKey] || bodyStraightImg
   }
 
-  const drawApple = useCallback((ctx: CanvasRenderingContext2D, apple: Position, isGolden?: boolean) => {
-    if (!appleImg || !goldenAppleImg) return
-    const { sx, sy } = toScreenCoords(apple.x, apple.y)
-    const size = segmentSize * 0.8
+  const drawApple = useCallback(
+    (ctx: CanvasRenderingContext2D, apple: Position, isGolden?: boolean) => {
+      if (!appleImg || !goldenAppleImg) return
+      const { sx, sy } = toScreenCoords(apple.x, apple.y)
+      const size = segmentSize * 0.8
 
-    const imgToUse = isGolden ? goldenAppleImg : appleImg
-    ctx.drawImage(imgToUse, sx - size/2, sy - size/2, size, size)
-  }, [toScreenCoords, segmentSize, appleImg, goldenAppleImg])
+      const imgToUse = isGolden ? goldenAppleImg : appleImg
+      ctx.drawImage(imgToUse, sx - size / 2, sy - size / 2, size, size)
+    },
+    [toScreenCoords, segmentSize, appleImg, goldenAppleImg]
+  )
 
-  const drawSnake = useCallback((ctx: CanvasRenderingContext2D, snake: Position[]) => {
-    if (!headImg || !tailImg || !bodyStraightImg || !bodyCornerUpLeftImg || !bodyCornerLeftDownImg || !bodyCornerDownRightImg || !bodyCornerRightUpImg) return
+  const drawSnake = useCallback(
+    (ctx: CanvasRenderingContext2D, snake: Position[]) => {
+      if (!headImg || !tailImg || !bodyStraightImg || !bodyCornerUpLeftImg || !bodyCornerLeftDownImg || !bodyCornerDownRightImg || !bodyCornerRightUpImg) return
 
-    for (let i = 0; i < snake.length; i++) {
-      const seg = snake[i]
-      const { sx, sy } = toScreenCoords(seg.x, seg.y)
-      const size = segmentSize
+      for (let i = 0; i < snake.length; i++) {
+        const seg = snake[i]
+        const { sx, sy } = toScreenCoords(seg.x, seg.y)
+        const size = segmentSize
 
-      ctx.save()
-      let img: HTMLImageElement | null = null
+        ctx.save()
+        let img: HTMLImageElement | null = null
 
-      if (i === 0) {
-        // Head
-        img = headImg
-        let direction = 'right'
-        if (snake.length > 1) {
-          const nextSeg = snake[i+1]
-          const dir = getDirection(seg, nextSeg)
+        if (i === 0) {
+          // Head
+          img = headImg
+          let direction = 'right'
+          if (snake.length > 1) {
+            const nextSeg = snake[i + 1]
+            const dir = getDirection(seg, nextSeg)
+            if (dir) direction = dir
+          }
+          rotateForDirection(ctx, direction, sx, sy)
+          ctx.drawImage(img, sx - size / 2, sy - size / 2, size, size)
+        } else if (i === snake.length - 1) {
+          // Tail
+          img = tailImg
+          let direction = 'right'
+          const prevSeg = snake[i - 1]
+          const dir = getDirection(prevSeg, seg)
           if (dir) direction = dir
-        }
-        rotateForDirection(ctx, direction, sx, sy)
-        ctx.drawImage(img, sx - size/2, sy - size/2, size, size)
-      } else if (i === snake.length - 1) {
-        // Tail
-        img = tailImg
-        let direction = 'right'
-        const prevSeg = snake[i-1]
-        const dir = getDirection(prevSeg, seg)
-        if (dir) direction = dir
-        rotateForDirection(ctx, direction, sx, sy)
-        ctx.drawImage(img, sx - size/2, sy - size/2, size, size)
-      } else {
-        // Body segment
-        const prevSeg = snake[i-1]
-        const nextSeg = snake[i+1]
-        const prevDir = getDirection(prevSeg, seg)
-        const nextDir = getDirection(seg, nextSeg)
-
-        if (!prevDir || !nextDir) {
-          img = bodyStraightImg
-          ctx.drawImage(img, sx - size/2, sy - size/2, size, size)
-          ctx.restore()
-          continue
-        }
-
-        if (prevDir === nextDir) {
-          // Straight segment
-          img = bodyStraightImg
-          rotateForDirection(ctx, prevDir, sx, sy)
-          ctx.drawImage(img, sx - size/2, sy - size/2, size, size)
+          rotateForDirection(ctx, direction, sx, sy)
+          ctx.drawImage(img, sx - size / 2, sy - size / 2, size, size)
         } else {
-          // Corner segment
-          const cornerImg = getCornerImage(prevDir, nextDir)
-          if (cornerImg) {
-            ctx.drawImage(cornerImg, sx - size/2, sy - size/2, size, size)
+          // Body segment
+          const prevSeg = snake[i - 1]
+          const nextSeg = snake[i + 1]
+          const prevDir = getDirection(prevSeg, seg)
+          const nextDir = getDirection(seg, nextSeg)
+
+          if (!prevDir || !nextDir) {
+            img = bodyStraightImg
+            ctx.drawImage(img, sx - size / 2, sy - size / 2, size, size)
+            ctx.restore()
+            continue
+          }
+
+          if (prevDir === nextDir) {
+            // Straight segment
+            img = bodyStraightImg
+            rotateForDirection(ctx, prevDir, sx, sy)
+            ctx.drawImage(img, sx - size / 2, sy - size / 2, size, size)
           } else {
-            ctx.drawImage(bodyStraightImg, sx - size/2, sy - size/2, size, size)
+            // Corner segment
+            const cornerImg = getCornerImage(prevDir, nextDir)
+            if (cornerImg) {
+              ctx.drawImage(cornerImg, sx - size / 2, sy - size / 2, size, size)
+            } else {
+              ctx.drawImage(bodyStraightImg, sx - size / 2, sy - size / 2, size, size)
+            }
           }
         }
+        ctx.restore()
       }
-      ctx.restore()
-    }
-  }, [
-    toScreenCoords,
-    segmentSize,
-    headImg,
-    tailImg,
-    bodyStraightImg,
-    bodyCornerUpLeftImg,
-    bodyCornerLeftDownImg,
-    bodyCornerDownRightImg,
-    bodyCornerRightUpImg
-  ])
+    },
+    [
+      toScreenCoords,
+      segmentSize,
+      headImg,
+      tailImg,
+      bodyStraightImg,
+      bodyCornerUpLeftImg,
+      bodyCornerLeftDownImg,
+      bodyCornerDownRightImg,
+      bodyCornerRightUpImg
+    ]
+  )
 
   const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current
@@ -413,7 +421,7 @@ const Home: React.FC = () => {
   const getDistance = (touch1: React.Touch, touch2: React.Touch) => {
     const dx = touch2.clientX - touch1.clientX
     const dy = touch2.clientY - touch1.clientY
-    return Math.sqrt(dx*dx + dy*dy)
+    return Math.sqrt(dx * dx + dy * dy)
   }
 
   const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
@@ -534,9 +542,35 @@ const Home: React.FC = () => {
         zIndex: 0
       }}
     >
-      {/* For better mobile responsiveness, ensure you have:
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+      {/*
+        For better mobile responsiveness, ensure you have:
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
       */}
+
+      {/* --- BACK ARROW BUTTON (TOP LEFT) --- */}
+      <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 9999 }}>
+        <button
+          onClick={() => router.push('/')}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 0
+          }}
+          aria-label="Go back to homepage"
+        >
+          {/* A simple SVG arrow icon, you can replace with your own icon/image */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="32"
+            width="32"
+            viewBox="0 96 960 960"
+            fill="black"
+          >
+            <path d="M480 849.333 240 609.333l240-240 59.333 59.333-145.334 145.334h566.668v80H393.999l145.334 145.333-59.333 59.333Z"/>
+          </svg>
+        </button>
+      </div>
 
       <canvas
         ref={canvasRef}
@@ -559,8 +593,9 @@ const Home: React.FC = () => {
         }}
       />
 
-      <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 9999 }}>
-        <TransactionCard/>
+      {/* If you want to keep the TransactionCard in the top-left as well, adjust the styling as needed */}
+      <div style={{ position: 'absolute', top: 10, left: 60, zIndex: 9999 }}>
+        <TransactionCard />
         {snakeData?.is_golden_apple && snakeData.apple_spawned_by && showNotification && (
           <GoldenAppleNotification
             tx_id={snakeData.apple_spawned_by.tx_id}
@@ -571,13 +606,15 @@ const Home: React.FC = () => {
         )}
       </div>
 
-      <div style={{
-        position: 'absolute',
-        bottom: 20,
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 9999
-      }}>
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 20,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 9999
+        }}
+      >
         <button
           onClick={handleLocateSnake}
           style={{
